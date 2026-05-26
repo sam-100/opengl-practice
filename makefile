@@ -1,12 +1,14 @@
+CXX=g++
+CFLAGS = -c -I ThirdParty/include -I include
+LDFLAGS = -lglfw -lGL
 
-OBJ = bin/main.o
 
 all: main
 
 
 # Linking Rule
-main: bin/main.o
-	g++ -o main  bin/main.o -lglfw -lGL
+main: bin/main.o bin/utils.o
+	$(CXX) -o main  bin/main.o bin/utils.o $(LDFLAGS)
 
 
 # Running final executible rule
@@ -14,9 +16,12 @@ run: main
 	./main
 
 # Compilation rules
-bin/main.o: src/main.cpp
-	g++ -c -I ThirdParty/include -o bin/main.o src/main.cpp
+bin/%.o: src/%.cpp
+	$(CXX) -c $(CFLAGS) -o $@ $<
 
 
 clean:
 	rm -rf bin/* main
+
+
+.PHONY: all clean run

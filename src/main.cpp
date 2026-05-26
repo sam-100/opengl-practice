@@ -1,19 +1,9 @@
 #include <iostream>
 #include "GLFW/glfw3.h"
+#include "utils.hpp"
 
 using namespace std;
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if(key == GLFW_KEY_ESCAPE) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-        return;
-    }
-}
-
-void error(const char *msg) {
-    cerr << "Error: " << msg << endl;
-    exit(1);
-}
 
 int main(int argc, char **argv) {
     if(glfwInit() == GLFW_FALSE) {
@@ -21,6 +11,7 @@ int main(int argc, char **argv) {
     }
     GLFWwindow *window = glfwCreateWindow(800, 600, "Hello Triangle", NULL, NULL);
     if(window == nullptr) {
+        glfwTerminate();
         error("GLFW: Failed to create window");
     }
 
@@ -33,7 +24,7 @@ int main(int argc, char **argv) {
     
     int iteration = 0;
     while(!glfwWindowShouldClose(window)) {
-        glClearColor((float)((iteration++)%256)/256, 0, 0, 0);
+        glClearColor(0.2f, 0.2f, 0.2f, 0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glfwPollEvents();
