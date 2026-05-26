@@ -13,7 +13,7 @@ main: bin/main.o bin/utils.o bin/glad.o
 
 # Running final executible rule
 run: main
-	./main
+	LD_LIBRARY_PATH=ThirdParty/lib ./main
 
 # Compilation rules
 bin/%.o: src/%.cpp
