@@ -16,4 +16,23 @@ void error(const char *msg) {
     exit(1);
 }
 
+const char* load_file(const char* file_path) {
+    FILE* file = fopen(file_path, "rb");
 
+    if (file == nullptr) {
+        return nullptr;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    rewind(file);
+
+    char* buffer = new char[size + 1];
+
+    fread(buffer, 1, size, file);
+    buffer[size] = '\0';
+
+    fclose(file);
+
+    return buffer;
+}
