@@ -5,11 +5,20 @@
 
 using namespace std;
 
-float vertex_buffer[] = {
+GLfloat vertex_buffer[] = {
     -0.5f, -0.5f, 0.0f, 
-    0.5f, -0.5f, 0.0f, 
-    0.0f, 0.5f, 0.0f
+    -0.5f,  0.5f, 0.0f, 
+     0.5f,  0.5f, 0.0f, 
+     0.5f, -0.5f, 0.0f
 };
+
+GLuint element_buffer[] = {
+    0, 1, 2, 
+    0, 2, 3
+};
+
+const int vertex_count = 12;
+const int index_count = 6;
 
 int main(int argc, char **argv) {
     // Initializing glfw
@@ -39,14 +48,17 @@ int main(int argc, char **argv) {
     
 
     // vertex buffer and vertex array
-    GLuint vbo, vao;
+    GLuint vbo, vao, ebo;
     glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
     glGenVertexArrays(1, &vao);
 
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vertex_buffer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(float), vertex_buffer, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(int), element_buffer, GL_STATIC_DRAW);
 
     glBindVertexArray(vao);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
@@ -101,7 +113,8 @@ int main(int argc, char **argv) {
 
         glBindVertexArray(vao);
         glUseProgram(prg);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwPollEvents();
 
