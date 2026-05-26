@@ -6,7 +6,7 @@ all: main
 
 # Linking Rule
 main: bin/main.o
-	g++ -o main  bin/main.o -lglfw
+	g++ -o main  bin/main.o -lglfw -lGL
 
 
 # Running final executible rule
