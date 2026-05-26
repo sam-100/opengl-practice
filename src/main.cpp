@@ -5,7 +5,7 @@
 
 using namespace std;
 
-GLfloat vertex_buffer[] = {
+GLfloat position_buffer[] = {
     -0.5f, -0.5f, 0.0f, 
     -0.5f,  0.5f, 0.0f, 
      0.5f,  0.5f, 0.0f, 
@@ -15,6 +15,13 @@ GLfloat vertex_buffer[] = {
 GLuint element_buffer[] = {
     0, 1, 2, 
     0, 2, 3
+};
+
+GLfloat color_buffer[] = {
+    1.0, 0.0, 0.0, 1.0, 
+    0.0, 1.0, 0.0, 1.0, 
+    0.0, 0.0, 1.0, 1.0, 
+    0.5, 0.5, 0.5, 1.0
 };
 
 const int vertex_count = 12;
@@ -48,21 +55,31 @@ int main(int argc, char **argv) {
     
 
     // vertex buffer and vertex array
-    GLuint vbo, vao, ebo;
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
+    GLuint pos_bo, vao, index_bo, color_bo;
+    glGenBuffers(1, &pos_bo);
+    glGenBuffers(1, &index_bo);
+    glGenBuffers(1, &color_bo);
     glGenVertexArrays(1, &vao);
 
+    
+    glBindBuffer(GL_ARRAY_BUFFER, pos_bo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(position_buffer), position_buffer, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, color_bo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color_buffer), color_buffer, GL_STATIC_DRAW);
+    
     glBindVertexArray(vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_bo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element_buffer), element_buffer, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(float), vertex_buffer, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(int), element_buffer, GL_STATIC_DRAW);
 
-    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, pos_bo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
     glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, color_bo);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) 0);
+    glEnableVertexAttribArray(1);
+    
 
     glBindVertexArray(0);
 
@@ -106,7 +123,7 @@ int main(int argc, char **argv) {
         error("OpenGL: Failed to link shader program");
     }
     
-    int iteration = 0;
+    // main loop
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.2f, 0.2f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -121,6 +138,7 @@ int main(int argc, char **argv) {
         glfwSwapBuffers(window);
     }
 
+    // clear and return
     glfwTerminate();
 
     return 0;
