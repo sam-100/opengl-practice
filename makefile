@@ -7,8 +7,8 @@ all: main
 
 
 # Linking Rule
-main: bin/main.o bin/utils.o
-	$(CXX) -o main  bin/main.o bin/utils.o $(LDFLAGS)
+main: bin/main.o bin/utils.o bin/glad.o
+	$(CXX) -o main  bin/main.o bin/utils.o bin/glad.o $(LDFLAGS)
 
 
 # Running final executible rule
@@ -18,7 +18,8 @@ run: main
 # Compilation rules
 bin/%.o: src/%.cpp
 	$(CXX) -c $(CFLAGS) -o $@ $<
-
+bin/glad.o: ThirdParty/src/glad.c
+	gcc $(CFLAGS) ThirdParty/src/glad.c -o bin/glad.o
 
 clean:
 	rm -rf bin/* main
