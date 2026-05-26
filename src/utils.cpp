@@ -2,6 +2,10 @@
 #include "utils.hpp"
 #include <iostream>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+
 using namespace std;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -35,4 +39,34 @@ const char* load_file(const char* file_path) {
     fclose(file);
 
     return buffer;
+}
+
+GLuint generate_texture(const char *file_name) {
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load(file_name, &width, &height, &nrChannels, 0);
+    if(!data) {
+        error("stbi: Failed to load the image data");
+    }
+
+    GLenum format, internal_format;
+    if(nrChannels == 1) {
+        format = internal_format = GL_RED;
+    } else if(nrChannels == 3) {
+        format = internal_format = GL_RGB;
+    } else if (nrChannels == 4) {
+       format = internal_format = GL_RGBA;
+    } else {
+        error("stbi: unsupported number of channels in given image format.");
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(data);
+    return texture;
 }

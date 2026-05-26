@@ -3,9 +3,6 @@
 #include "GLFW/glfw3.h"
 #include "utils.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 using namespace std;
 
 GLfloat position_buffer[] = {
@@ -81,21 +78,11 @@ int main(int argc, char **argv) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(texture_buffer), texture_buffer, GL_STATIC_DRAW);
 
     // generate and load texture
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load("assets/wall.jpg", &width, &height, &nrChannels, 0);
-    if(!data) {
-        error("stbi: Failed to load the image data");
-    }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    stbi_image_free(data);
+    GLuint tex_container, tex_smiley;
+    tex_container = generate_texture("assets/container.jpg");
+    // tex_smiley = generate_texture("assets/smiley.png");
+
+    // GLuint tex_smiley = generate_texture("assets/container.jpg");
     
     // set vertex attributes
     glBindVertexArray(vao);
@@ -157,7 +144,8 @@ int main(int argc, char **argv) {
         error("OpenGL: Failed to link shader program");
     }
     glUseProgram(prg);
-    glUniform1i(glGetUniformLocation(prg, "ourTexture"), 0);
+    glUniform1i(glGetUniformLocation(prg, "container"), 0);
+    // glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
 
     
     // main loop
@@ -166,7 +154,7 @@ int main(int argc, char **argv) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, tex_container);
         glBindVertexArray(vao);
         glUseProgram(prg);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
