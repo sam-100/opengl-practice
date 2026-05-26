@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
     // generate and load texture
     GLuint tex_container, tex_smiley;
     tex_container = generate_texture("assets/container.jpg");
-    // tex_smiley = generate_texture("assets/smiley.png");
+    tex_smiley = generate_texture("assets/smiley.png");
 
     // GLuint tex_smiley = generate_texture("assets/container.jpg");
     
@@ -145,7 +145,7 @@ int main(int argc, char **argv) {
     }
     glUseProgram(prg);
     glUniform1i(glGetUniformLocation(prg, "container"), 0);
-    // glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
+    glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
 
     
     // main loop
@@ -155,6 +155,8 @@ int main(int argc, char **argv) {
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex_container);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, tex_smiley);
         glBindVertexArray(vao);
         glUseProgram(prg);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
