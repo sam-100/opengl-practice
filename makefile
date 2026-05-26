@@ -15,7 +15,7 @@ run: main
 
 # Compilation rules
 bin/main.o: src/main.cpp
-	g++ -c -I ../../ThirdParty/include -o bin/main.o src/main.cpp
+	g++ -c -I ThirdParty/include -o bin/main.o src/main.cpp
 
 
 clean:
