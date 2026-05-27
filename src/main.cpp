@@ -81,14 +81,16 @@ int main(int argc, char **argv) {
         error("GLFW: Failed to create window");
     }
     glfwMakeContextCurrent(window);
+    glfwFocusWindow(window);
     
     // setting callbacks
     glfwSetKeyCallback(window, key_callback);
     glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
-    
+    glfwSetCursorPosCallback(window, cursor_position_callback);
     
     // Loading opengl function pointers
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    glEnable(GL_DEPTH_TEST);
     
     
     // generate buffers
@@ -137,7 +139,6 @@ int main(int argc, char **argv) {
     glUseProgram(prg);
     glUniform1i(glGetUniformLocation(prg, "container"), 0);
     glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
-    glEnable(GL_DEPTH_TEST);
 
     // Transformations
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));

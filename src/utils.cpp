@@ -5,18 +5,43 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 using namespace std;
+
+extern glm::mat4 view;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(key == GLFW_KEY_ESCAPE) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         return;
     }
+    if(key == GLFW_KEY_W && action == GLFW_PRESS) {
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.2f));
+        return;
+    }
+    if(key == GLFW_KEY_S && action == GLFW_PRESS) {
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -0.2f));
+        return;
+    }
+    if(key == GLFW_KEY_A && action == GLFW_PRESS) {
+        view = glm::translate(view, glm::vec3(0.2f, 0.0f, 0.0f));
+        return;
+    }
+    if(key == GLFW_KEY_D && action == GLFW_PRESS) {
+        view = glm::translate(view, glm::vec3(-0.2f, 0.0f, 0.0f));
+        return;
+    }
 }
+
 
 void frame_buffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void cursor_position_callback(GLFWwindow *window, double xPos, double yPos) {
+    cout << "cursor position: " << "x = " << xPos << "\t" << "y = " << yPos << endl;
 }
 
 void error(const char *msg) {

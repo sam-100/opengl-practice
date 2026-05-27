@@ -7,6 +7,7 @@
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void frame_buffer_size_callback(GLFWwindow *window, int width, int height);
+void cursor_position_callback(GLFWwindow *window, double xPos, double yPos);
 
 void error(const char *msg);
 const char *load_file(const char *file_path);
