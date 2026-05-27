@@ -70,3 +70,40 @@ GLuint generate_texture(const char *file_name) {
     stbi_image_free(data);
     return texture;
 }
+
+GLuint createShader(const char *file_name, int type) {
+    GLuint shader;
+    const char *source_code;
+    int success, length;
+    char infolog[512];
+
+    shader = glCreateShader(type);
+    source_code = load_file(file_name);
+    glShaderSource(shader, 1, &source_code, nullptr);
+    glCompileShader(shader);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(shader, 512, &length, infolog);
+        cerr << infolog << endl;
+        error("OpenGL: Failed to compile vertex shader");
+    }
+    return shader;
+}
+
+GLuint linkShaders(GLuint vs, GLuint fs) {
+    GLuint prg;
+    int success, length;
+    char infolog[512];
+    
+    prg = glCreateProgram();
+    glAttachShader(prg, vs);
+    glAttachShader(prg, fs);
+    glLinkProgram(prg);
+    glGetProgramiv(prg, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(prg, 512, &length, infolog);
+        cerr << infolog << endl;
+        error("OpenGL: Failed to link shader program");
+    }
+    return prg;
+}

@@ -84,11 +84,13 @@ int main(int argc, char **argv) {
 
     // GLuint tex_smiley = generate_texture("assets/container.jpg");
     
-    // set vertex attributes
     glBindVertexArray(vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_bo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element_buffer), element_buffer, GL_STATIC_DRAW);
-
+    glBindVertexArray(0);
+    
+    // set vertex attributes
+    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, pos_bo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
     glEnableVertexAttribArray(0);
@@ -107,42 +109,17 @@ int main(int argc, char **argv) {
 
     // shaders
     GLuint vs, fs, prg;
-    const char *vs_src, *fs_src;
+    vs = createShader("shaders/triangle/vertex.glsl", GL_VERTEX_SHADER);
+    fs = createShader("shaders/triangle/fragment.glsl", GL_FRAGMENT_SHADER);
+
     int success, length;
     char infolog[512];
 
-    vs = glCreateShader(GL_VERTEX_SHADER);
-    vs_src = load_file("shaders/triangle/vertex.glsl");
-    glShaderSource(vs, 1, &vs_src, nullptr);
-    glCompileShader(vs);
-    glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(vs, 512, &length, infolog);
-        cerr << infolog << endl;
-        error("OpenGL: Failed to compile vertex shader");
-    }
+    prg = linkShaders(vs, fs);
+    glDeleteShader(vs);
+    glDeleteShader(fs);
 
-    fs = glCreateShader(GL_FRAGMENT_SHADER);
-    fs_src = load_file("shaders/triangle/fragment.glsl");
-    glShaderSource(fs, 1, &fs_src, nullptr);
-    glCompileShader(fs);
-    glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(fs, 512, &length, infolog);
-        cerr << infolog << endl;
-        error("OpenGL: Failed to compile fragment shader");
-    }
-
-    prg = glCreateProgram();
-    glAttachShader(prg, vs);
-    glAttachShader(prg, fs);
-    glLinkProgram(prg);
-    glGetProgramiv(prg, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(prg, 512, &length, infolog);
-        cerr << infolog << endl;
-        error("OpenGL: Failed to link shader program");
-    }
+    // Set the uniforms
     glUseProgram(prg);
     glUniform1i(glGetUniformLocation(prg, "container"), 0);
     glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
