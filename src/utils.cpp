@@ -15,6 +15,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+void frame_buffer_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
 void error(const char *msg) {
     cerr << "Error: " << msg << endl;
     exit(1);

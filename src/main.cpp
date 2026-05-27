@@ -2,6 +2,9 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "utils.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 using namespace std;
 
@@ -53,9 +56,9 @@ int main(int argc, char **argv) {
     glfwMakeContextCurrent(window);
 
     // setting callbacks
-    if(glfwSetKeyCallback(window, key_callback)) {
-        error("GLFW: Failed to set key callback");
-    };
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
+    
 
     // Loading opengl function pointers
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
@@ -124,18 +127,30 @@ int main(int argc, char **argv) {
     glUniform1i(glGetUniformLocation(prg, "container"), 0);
     glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
 
+
     
     // main loop
+    int iterator;
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.2f, 0.2f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-
+        
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex_container);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, tex_smiley);
         glBindVertexArray(vao);
         glUseProgram(prg);
+        
+        // Transformations
+        double curr_time = glfwGetTime();
+        glm::mat4 transform(1);
+        transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)curr_time, glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::translate(transform, glm::vec3(1.0, 1.0, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
+
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
