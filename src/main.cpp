@@ -63,7 +63,7 @@ const float width = 800;
 const float height = 600;
 
 glm::mat4 transform(1), model(1), view(1), projection(1);
-glm::vec3 cam_position, cam_right_direction, cam_front_direction;
+glm::vec4 cam_position, cam_right_direction, cam_front_direction;
 
 int main(int argc, char **argv) {
     // Initializing glfw
@@ -140,9 +140,9 @@ int main(int argc, char **argv) {
     glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
 
     // Transformations
-    cam_position = glm::vec3(0.0f, 0.0f, 3.0f);
-    cam_front_direction = glm::vec3(0.0f, 0.0f, -1.0f);
-    cam_right_direction = glm::vec3(1.0f, 0.0f, 0.0f);
+    cam_position = glm::vec4(0.0f, 0.0f, 3.0f, 1.0f);
+    cam_front_direction = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
+    cam_right_direction = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
     // model = glm::rotate(model, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     projection = glm::perspective(glm::radians(60.0f), width / height, 0.1f, 100.0f);
@@ -163,7 +163,12 @@ int main(int argc, char **argv) {
         
         // Transformations
         model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        view = glm::lookAt(cam_position, cam_position + cam_front_direction, glm::normalize(glm::cross(cam_right_direction, cam_front_direction)));
+        // view = glm::lookAt(cam_position, cam_position + cam_front_direction, glm::normalize(glm::cross(cam_right_direction, cam_front_direction)));
+        view = glm::lookAt(
+            glm::vec3(cam_position), 
+            glm::vec3(cam_position) + glm::vec3(cam_front_direction), 
+            glm::normalize(glm::cross(glm::vec3(cam_right_direction), glm::vec3(cam_front_direction)))
+        );
         transform = projection * view * model;
         glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
         
