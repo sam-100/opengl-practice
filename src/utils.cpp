@@ -11,28 +11,35 @@
 using namespace std;
 
 extern glm::mat4 view;
+extern glm::vec3 cam_position, cam_right_direction, cam_front_direction;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(key == GLFW_KEY_ESCAPE) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         return;
     }
-    if(key == GLFW_KEY_W && action == GLFW_PRESS) {
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.2f));
+    if(key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cam_position += cam_front_direction * 0.2f;
         return;
     }
-    if(key == GLFW_KEY_S && action == GLFW_PRESS) {
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -0.2f));
+    if(key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cam_position -= cam_front_direction * 0.2f;
         return;
     }
-    if(key == GLFW_KEY_A && action == GLFW_PRESS) {
-        view = glm::translate(view, glm::vec3(0.2f, 0.0f, 0.0f));
+    if(key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cam_position -= cam_right_direction * 0.2f;
         return;
     }
-    if(key == GLFW_KEY_D && action == GLFW_PRESS) {
-        view = glm::translate(view, glm::vec3(-0.2f, 0.0f, 0.0f));
+    if(key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cam_position += cam_right_direction * 0.2f;
         return;
     }
+
+    // turning 
+    // if(key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    //     glm::vec3 cam_up_direction = glm::normalize(glm::cross(cam_right_direction, cam_front_direction));
+    //     // cam_front_direction = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * cam_front_direction;
+    // }
 }
 
 
