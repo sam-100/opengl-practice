@@ -11,7 +11,7 @@
 using namespace std;
 
 extern glm::mat4 view;
-extern glm::vec4 cam_position, cam_right_direction, cam_front_direction;
+extern glm::vec3 cam_position, cam_right_direction, cam_front_direction;
 
 ostream& operator<<(ostream &out, const glm::vec4 &vec) {
     out << "< " << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << " >";
@@ -41,40 +41,50 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 
     // turning 
-    glm::vec4 cam_up_direction(
-        glm::normalize(glm::cross(glm::vec3(cam_right_direction), glm::vec3(cam_front_direction))), 
-        1.0f
-    );
+    glm::vec3 cam_up_direction = glm::normalize(glm::cross(cam_right_direction, cam_front_direction));
     if(key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cam_front_direction = glm::rotate(glm::mat4(1), glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * cam_front_direction;
-        cam_right_direction = glm::vec4(
-            glm::normalize(glm::cross(glm::vec3(cam_front_direction), glm::vec3(cam_up_direction))), 
+        cam_front_direction = glm::rotate(
+            glm::mat4(1), 
+            glm::radians(2.0f), cam_up_direction) * glm::vec4(cam_front_direction, 
             1.0f
         );
+        cam_front_direction= glm::normalize(cam_front_direction);
+        cam_right_direction = glm::normalize(glm::cross(cam_front_direction, cam_up_direction));
     }
     if(key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cam_front_direction = glm::rotate(glm::mat4(1), glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * cam_front_direction;
-        cam_right_direction = glm::vec4(
-            glm::normalize(glm::cross(glm::vec3(cam_front_direction), glm::vec3(cam_up_direction))), 
+        cam_front_direction = glm::rotate(
+            glm::mat4(1), 
+            glm::radians(-2.0f), cam_up_direction) * glm::vec4(cam_front_direction, 
             1.0f
         );
+        cam_front_direction= glm::normalize(cam_front_direction);
+        cam_right_direction = glm::normalize(glm::cross(cam_front_direction, cam_up_direction));
     }
     if(key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cam_front_direction = glm::rotate(glm::mat4(1), glm::radians(2.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * cam_front_direction;
+        cam_front_direction = glm::rotate(
+            glm::mat4(1), 
+            glm::radians(2.0f), cam_right_direction) * glm::vec4(cam_front_direction, 
+            1.0f
+        );
+        cam_front_direction= glm::normalize(cam_front_direction);
     }
     if(key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cam_front_direction = glm::rotate(glm::mat4(1), glm::radians(-2.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * cam_front_direction;
+        cam_front_direction = glm::rotate(
+            glm::mat4(1), 
+            glm::radians(-2.0f), cam_right_direction) * glm::vec4(cam_front_direction, 
+            1.0f
+        );
+        cam_front_direction= glm::normalize(cam_front_direction);
     }
 
 
     // reset camera
     if(key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-        cam_position = glm::vec4(0.0f, 0.0f, 3.0f, 1.0f);
-        cam_right_direction = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        cam_front_direction = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
+        cam_position = glm::vec3(0.0f, 0.0f, 3.0f);
+        cam_right_direction = glm::vec3(1.0f, 0.0f, 0.0f);
+        cam_front_direction = glm::vec3(0.0f, 0.0f, -1.0f);
     }
 
-    
 }
 
 
