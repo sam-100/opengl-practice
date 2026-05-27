@@ -1,6 +1,6 @@
 CXX=g++
 CFLAGS = -c -I ThirdParty/include -I include
-LDFLAGS = -L ThirdParty/lib -lglfw -lGL
+LDFLAGS = -L ThirdParty/lib -lglfw
 
 
 all: main
