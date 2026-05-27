@@ -14,7 +14,6 @@ using namespace std;
 extern glm::mat4 view;
 extern camera cam;
 
-
 ostream& operator<<(ostream &out, const glm::vec3 &vec) {
     out << "< " << vec.x << ", " << vec.y << ", " << vec.z << " >";
     return out;
@@ -75,6 +74,15 @@ void frame_buffer_size_callback(GLFWwindow *window, int width, int height) {
 
 void cursor_position_callback(GLFWwindow *window, double xPos, double yPos) {
     cout << "cursor position: " << "x = " << xPos << "\t" << "y = " << yPos << endl;
+
+    static double xPosOld = xPos, yPosOld = yPos;
+
+    double dx = xPos - xPosOld, dy = yPos - yPosOld;
+    cam.turn_yaw(glm::radians(dx) / 10);
+    cam.turn_pitch(glm::radians(dy) / 10);
+
+    xPosOld = xPos;
+    yPosOld = yPos;
 }
 
 void error(const char *msg) {
