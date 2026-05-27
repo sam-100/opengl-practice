@@ -8,23 +8,48 @@
 
 using namespace std;
 
-GLfloat position_buffer[] = {
-    -0.5f, -0.5f, 0.0f, 
-    -0.5f,  0.5f, 0.0f, 
-     0.5f,  0.5f, 0.0f, 
-     0.5f, -0.5f, 0.0f
-};
+float vertices[] = {
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-GLuint element_buffer[] = {
-    0, 1, 2, 
-    0, 2, 3
-};
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-GLfloat color_buffer[] = {
-    1.0, 0.0, 0.0, 1.0, 
-    0.0, 1.0, 0.0, 1.0, 
-    0.0, 0.0, 1.0, 1.0, 
-    0.5, 0.5, 0.5, 1.0
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
 GLfloat texture_buffer[] = {
@@ -34,8 +59,10 @@ GLfloat texture_buffer[] = {
     1.0f, 0.0f
 };
 
-const int vertex_count = 12;
-const int index_count = 6;
+const float width = 800;
+const float height = 600;
+
+glm::mat4 transform(1), model(1), view(1), projection(1);
 
 int main(int argc, char **argv) {
     // Initializing glfw
@@ -54,86 +81,74 @@ int main(int argc, char **argv) {
         error("GLFW: Failed to create window");
     }
     glfwMakeContextCurrent(window);
-
+    
     // setting callbacks
     glfwSetKeyCallback(window, key_callback);
     glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
     
-
+    
     // Loading opengl function pointers
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     
-
+    
     // generate buffers
-    GLuint pos_bo, vao, index_bo, color_bo, texture_bo;
-    glGenBuffers(1, &pos_bo);
-    glGenBuffers(1, &index_bo);
-    glGenBuffers(1, &color_bo);
-    glGenBuffers(1, &texture_bo);
+    GLuint vbo, vao;
+    glGenBuffers(1, &vbo);
     glGenVertexArrays(1, &vao);
-
+    
     // load buffers
-    glBindBuffer(GL_ARRAY_BUFFER, pos_bo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(position_buffer), position_buffer, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, color_bo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(color_buffer), color_buffer, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, texture_bo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(texture_buffer), texture_buffer, GL_STATIC_DRAW);
-
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
     // generate and load texture
     GLuint tex_container, tex_smiley;
     tex_container = generate_texture("assets/container.jpg");
     tex_smiley = generate_texture("assets/smiley.png");
-
+    
     // GLuint tex_smiley = generate_texture("assets/container.jpg");
     
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_bo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element_buffer), element_buffer, GL_STATIC_DRAW);
-    glBindVertexArray(0);
     
     // set vertex attributes
     glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, pos_bo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) 0);
     glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, color_bo);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) 0);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, texture_bo);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
-    glEnableVertexAttribArray(2);
     
-
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), ((void*)(3 * sizeof(float))));
+    glEnableVertexAttribArray(1);    
+    
     glBindVertexArray(0);
-
-
+    
+    
     // shaders
     GLuint vs, fs, prg;
     vs = createShader("shaders/triangle/vertex.glsl", GL_VERTEX_SHADER);
     fs = createShader("shaders/triangle/fragment.glsl", GL_FRAGMENT_SHADER);
-
+    
     int success, length;
     char infolog[512];
-
+    
     prg = linkShaders(vs, fs);
     glDeleteShader(vs);
     glDeleteShader(fs);
-
+    
     // Set the uniforms
     glUseProgram(prg);
     glUniform1i(glGetUniformLocation(prg, "container"), 0);
     glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
+    glEnable(GL_DEPTH_TEST);
 
-
+    // Transformations
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
+    model = glm::rotate(model, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    projection = glm::perspective(glm::radians(60.0f), width / height, 0.1f, 100.0f);
     
     // main loop
     int iterator;
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.2f, 0.2f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         
         glActiveTexture(GL_TEXTURE0);
@@ -144,15 +159,11 @@ int main(int argc, char **argv) {
         glUseProgram(prg);
         
         // Transformations
-        double curr_time = glfwGetTime();
-        glm::mat4 transform(1);
-        transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.0f));
-        transform = glm::rotate(transform, (float)curr_time, glm::vec3(0.0f, 0.0f, 1.0f));
-        transform = glm::translate(transform, glm::vec3(1.0, 1.0, 0.0f));
+        transform = projection * view * model;
         glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
-
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwPollEvents();
 
