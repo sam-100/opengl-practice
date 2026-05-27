@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
         glUseProgram(prg);
         
         // Transformations
-        model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        // model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         // view = glm::lookAt(cam_position, cam_position + cam_front_direction, glm::normalize(glm::cross(cam_right_direction, cam_front_direction)));
         view = glm::lookAt(
             glm::vec3(cam_position), 
