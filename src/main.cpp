@@ -140,7 +140,10 @@ int main(int argc, char **argv) {
 
     // Transformations
     glm::vec3 cube1_pos = glm::vec3(0.0f, -1.0f, 0.0f);
-    glm::vec3 cube2_pos = glm::vec3(0.5f, 0.5f, 0.0f);
+    glm::vec3 cube1_color = glm::vec3(0.6f, 0.3f, 0.0f);
+    glm::vec3 cube2_pos = glm::vec3(0.5f, 0.0f, 0.0f);
+    glm::vec3 cube2_color = glm::vec3(1.0f, 1.0f, 1.0f);
+    
     
     // main loop
     while(!glfwWindowShouldClose(window)) {
@@ -158,10 +161,10 @@ int main(int argc, char **argv) {
         // Draw cube 1
         model = glm::mat4(1.0f);
         model = glm::translate(model, cube1_pos);
-        model = glm::scale(model, glm::vec3(1.0f));
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
         transform = projection * view * model;
         glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
-        glUniform3f(glGetUniformLocation(prg, "color"), 0.6f, 0.3f, 0.0f);
+        glUniform3f(glGetUniformLocation(prg, "color"), cube1_color.x, cube1_color.y, cube1_color.z);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
@@ -171,7 +174,7 @@ int main(int argc, char **argv) {
         model = glm::scale(model, glm::vec3(0.25f));
         transform = projection * view * model;
         glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
-        glUniform3f(glGetUniformLocation(prg, "color"), 1.0f, 1.0f, 1.0f);
+        glUniform3f(glGetUniformLocation(prg, "color"), cube2_color.x, cube2_color.y, cube2_color.z);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
