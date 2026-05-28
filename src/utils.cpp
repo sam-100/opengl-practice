@@ -76,6 +76,7 @@ void cursor_position_callback(GLFWwindow *window, double xPos, double yPos) {
     cout << "cursor position: " << "x = " << xPos << "\t" << "y = " << yPos << endl;
 
     static double xPosOld = xPos, yPosOld = yPos;
+    
 
     double dx = xPos - xPosOld, dy = yPos - yPosOld;
     cam.turn_yaw(glm::radians(-dx) / 10);

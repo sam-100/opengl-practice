@@ -56,3 +56,6 @@ void camera::print() const {
     cout << "\tlength of right = " << glm::length(m_right) << endl;
 }
 
+float camera::getFov() const {
+    return m_fov;
+}

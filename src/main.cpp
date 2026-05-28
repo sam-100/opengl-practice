@@ -65,6 +65,8 @@ const float height = 600;
 
 glm::mat4 transform(1), model(1), view(1), projection(1);
 camera cam;
+glm::vec3 cube1_pos, cube2_pos;
+
 
 int main(int argc, char **argv) {
     // Initializing glfw
@@ -105,11 +107,6 @@ int main(int argc, char **argv) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     
-    // generate and load texture
-    GLuint tex_container, tex_smiley;
-    tex_container = generate_texture("assets/container.jpg");
-    tex_smiley = generate_texture("assets/smiley.png");
-        
     
     // set vertex attributes
     glBindVertexArray(vao);
@@ -142,34 +139,40 @@ int main(int argc, char **argv) {
     glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
 
     // Transformations
-    model = glm::translate(model, glm::vec3(0.0f, -1.0f, -1.0f));
-    // model = glm::rotate(model, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    projection = glm::perspective(glm::radians(60.0f), width / height, 0.1f, 100.0f);
+    glm::vec3 cube1_pos = glm::vec3(0.0f, -1.0f, 0.0f);
+    glm::vec3 cube2_pos = glm::vec3(0.5f, 0.5f, 0.0f);
     
     // main loop
-    int iterator;
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.2f, 0.2f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         glfwPollEvents();
         
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, tex_container);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, tex_smiley);
         glBindVertexArray(vao);
         glUseProgram(prg);
-        
-        // Transformations
-        // model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        // view = glm::lookAt(cam_position, cam_position + cam_front_direction, glm::normalize(glm::cross(cam_right_direction, cam_front_direction)));
         view = cam.getViewMatrix();
+        projection = glm::perspective(cam.getFov(), width / height, 0.1f, 100.0f);
+
+        
+        // Draw cube 1
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, cube1_pos);
+        model = glm::scale(model, glm::vec3(1.0f));
         transform = projection * view * model;
         glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
-        
+        glUniform3f(glGetUniformLocation(prg, "color"), 0.6f, 0.3f, 0.0f);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+        // Draw cube 2
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, cube2_pos);
+        model = glm::scale(model, glm::vec3(0.25f));
+        transform = projection * view * model;
+        glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
+        glUniform3f(glGetUniformLocation(prg, "color"), 1.0f, 1.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
         glfwSwapBuffers(window);
