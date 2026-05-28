@@ -78,8 +78,8 @@ void cursor_position_callback(GLFWwindow *window, double xPos, double yPos) {
     static double xPosOld = xPos, yPosOld = yPos;
 
     double dx = xPos - xPosOld, dy = yPos - yPosOld;
-    cam.turn_yaw(glm::radians(dx) / 10);
-    cam.turn_pitch(glm::radians(dy) / 10);
+    cam.turn_yaw(glm::radians(-dx) / 10);
+    cam.turn_pitch(glm::radians(-dy) / 10);
 
     xPosOld = xPos;
     yPosOld = yPos;

@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
     glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
 
     // Transformations
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
+    model = glm::translate(model, glm::vec3(0.0f, -1.0f, -1.0f));
     // model = glm::rotate(model, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     projection = glm::perspective(glm::radians(60.0f), width / height, 0.1f, 100.0f);
     
@@ -151,6 +151,8 @@ int main(int argc, char **argv) {
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.2f, 0.2f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        glfwPollEvents();
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tex_container);
@@ -169,7 +171,6 @@ int main(int argc, char **argv) {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glfwPollEvents();
 
         glfwSwapBuffers(window);
     }
