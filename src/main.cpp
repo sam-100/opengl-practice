@@ -60,12 +60,18 @@ GLfloat texture_buffer[] = {
     1.0f, 0.0f
 };
 
-const float width = 800;
-const float height = 600;
+const float width = 1200;
+const float height = 900;
 
 glm::mat4 transform(1), model(1), view(1), projection(1);
 camera cam;
-glm::vec3 cube1_pos, cube2_pos;
+glm::vec3 object_cube, light_cube;
+
+// Transformations
+glm::vec3 cube_object_pos = glm::vec3(0.0f, -1.0f, 0.0f);
+glm::vec3 cube_object_color = glm::vec3(0.6f, 0.3f, 0.0f);
+glm::vec3 cube_lighting_pos = glm::vec3(0.3f, 0.0f, 0.0f);
+glm::vec3 cube_lighting_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 
 int main(int argc, char **argv) {
@@ -79,7 +85,7 @@ int main(int argc, char **argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Creating window
-    GLFWwindow *window = glfwCreateWindow(800, 600, "Hello Triangle", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(width, height, "Hello Triangle", NULL, NULL);
     if(window == nullptr) {
         glfwTerminate();
         error("GLFW: Failed to create window");
@@ -103,78 +109,81 @@ int main(int argc, char **argv) {
     glGenBuffers(1, &vbo);
     glGenVertexArrays(1, &vao);
     
-    // load buffers
+    // load the buffer data
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     
     // set vertex attributes
     glBindVertexArray(vao);
+
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) 0);
     glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), ((void*)(3 * sizeof(float))));
     glEnableVertexAttribArray(1);    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     glBindVertexArray(0);
     
     
     // shaders
-    GLuint vs, fs, prg;
-    vs = createShader("shaders/triangle/vertex.glsl", GL_VERTEX_SHADER);
-    fs = createShader("shaders/triangle/fragment.glsl", GL_FRAGMENT_SHADER);
+    GLuint vs, fsLight, fsObject, prgObject, prgLight;
+    vs = createShader("shaders/vertex.glsl", GL_VERTEX_SHADER);
+    fsLight = createShader("shaders/light-fragment.glsl", GL_FRAGMENT_SHADER);
+    fsObject = createShader("shaders/object-fragment.glsl", GL_FRAGMENT_SHADER);
     
     int success, length;
     char infolog[512];
     
-    prg = linkShaders(vs, fs);
+    prgLight = linkShaders(vs, fsLight);
+    prgObject = linkShaders(vs, fsObject);
     glDeleteShader(vs);
-    glDeleteShader(fs);
+    glDeleteShader(fsObject);
+    glDeleteShader(fsLight);
+    
     
     // Set the uniforms
-    glUseProgram(prg);
-    glUniform1i(glGetUniformLocation(prg, "container"), 0);
-    glUniform1i(glGetUniformLocation(prg, "smiley"), 1);
+    glUseProgram(prgObject);
+    glUniform3f(glGetUniformLocation(prgObject, "light_color"), cube_lighting_color.x, cube_lighting_color.y, cube_lighting_color.z);
+    glUseProgram(0);
+    
 
-    // Transformations
-    glm::vec3 cube1_pos = glm::vec3(0.0f, -1.0f, 0.0f);
-    glm::vec3 cube1_color = glm::vec3(0.6f, 0.3f, 0.0f);
-    glm::vec3 cube2_pos = glm::vec3(0.5f, 0.0f, 0.0f);
-    glm::vec3 cube2_color = glm::vec3(1.0f, 1.0f, 1.0f);
-    
-    
+
     // main loop
     while(!glfwWindowShouldClose(window)) {
-        glClearColor(0.2f, 0.2f, 0.2f, 1);
+        glClearColor(0.0f, 0.0f, 0.0f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         glfwPollEvents();
         
         glBindVertexArray(vao);
-        glUseProgram(prg);
         view = cam.getViewMatrix();
         projection = glm::perspective(cam.getFov(), width / height, 0.1f, 100.0f);
-
         
-        // Draw cube 1
+        // Draw cube object
         model = glm::mat4(1.0f);
-        model = glm::translate(model, cube1_pos);
+        model = glm::translate(model, cube_object_pos);
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
         transform = projection * view * model;
-        glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
-        glUniform3f(glGetUniformLocation(prg, "color"), cube1_color.x, cube1_color.y, cube1_color.z);
+        glUseProgram(prgObject);
+        glUniformMatrix4fv(glGetUniformLocation(prgObject, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
+        glUniform3f(glGetUniformLocation(prgObject, "color"), cube_object_color.x, cube_object_color.y, cube_object_color.z);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
-        // Draw cube 2
+        // Draw cube lighting
         model = glm::mat4(1.0f);
-        model = glm::translate(model, cube2_pos);
-        model = glm::scale(model, glm::vec3(0.25f));
+        model = glm::translate(model, cube_lighting_pos);
+        model = glm::scale(model, glm::vec3(0.10f));
         transform = projection * view * model;
-        glUniformMatrix4fv(glGetUniformLocation(prg, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
-        glUniform3f(glGetUniformLocation(prg, "color"), cube2_color.x, cube2_color.y, cube2_color.z);
+        glUseProgram(prgLight);
+        glUniformMatrix4fv(glGetUniformLocation(prgLight, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
+        glUniform3f(glGetUniformLocation(prgLight, "color"), cube_lighting_color.x, cube_lighting_color.y, cube_lighting_color.z);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
