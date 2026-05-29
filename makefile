@@ -16,7 +16,7 @@ main: $(OBJ)
 
 # Running final executible rule
 run: main
-	LD_LIBRARY_PATH=ThirdParty/lib ./main
+	@LD_LIBRARY_PATH=ThirdParty/lib ./main
 
 # Compilation rules
 bin/%.o: src/%.cpp

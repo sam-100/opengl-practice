@@ -1,9 +1,14 @@
 #version 420 core
 layout (location = 0) in vec3 pos;
-layout (location = 1) in vec2 tex_coords;
+layout (location = 1) in vec3 normal;
 
-uniform mat4 transform;
+out vec3 Normal;
+out vec3 FragPos;
+
+uniform mat4 model, view, projection;
 
 void main() {
-    gl_Position = transform * vec4(pos.x, pos.y, pos.z, 1.0);
+    gl_Position = projection * view * model * vec4(pos, 1.0);
+    Normal = normal;
+    FragPos = vec3(model * vec4(pos, 1.0f));
 }
