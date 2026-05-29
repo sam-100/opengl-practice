@@ -64,7 +64,7 @@ GLfloat texture_buffer[] = {
 const float width = 1200;
 const float height = 900;
 
-glm::mat4 transform(1), model(1), view(1), projection(1);
+glm::mat4 transform(1), model_object(1), model_lighting(1), view(1), projection(1);
 camera cam;
 glm::vec3 object_cube, light_cube;
 
@@ -161,7 +161,6 @@ int main(int argc, char **argv) {
     glUseProgram(prgObject);
     glUniform3f(glGetUniformLocation(prgObject, "light_color"), cube_lighting_color.x, cube_lighting_color.y, cube_lighting_color.z);
     glUniform3f(glGetUniformLocation(prgObject, "surface_color"), cube_object_color.x, cube_object_color.y, cube_object_color.z);
-    glUniform3f(glGetUniformLocation(prgObject, "light_pos"), cube_lighting_pos.x, cube_lighting_pos.y, cube_lighting_pos.z);
     glUseProgram(0);
     
     glUseProgram(prgLight);
@@ -169,8 +168,8 @@ int main(int argc, char **argv) {
     glUseProgram(0);
     
     /* ====================================================== */
-
-
+    
+    
     // main loop
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.0f, 0.0f, 0.0f, 1);
@@ -178,30 +177,34 @@ int main(int argc, char **argv) {
         
         glfwPollEvents();
         
+        // Calculate tranformation matrices
         glBindVertexArray(vao);
+        model_object = glm::mat4(1.0f);
+        model_object = glm::translate(model_object, cube_object_pos);
+        model_object = glm::scale(model_object, glm::vec3(1.0f, 1.0f, 1.0f));
+        model_lighting = glm::mat4(1.0f);
+        model_lighting = glm::rotate(model_lighting, (float) glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+        model_lighting = glm::translate(model_lighting, cube_lighting_pos);
+        model_lighting = glm::scale(model_lighting, glm::vec3(0.10f));
         view = cam.getViewMatrix();
         projection = glm::perspective(cam.getFov(), width / height, 0.1f, 100.0f);
         // glUniformMatrix4fv(glGetUniformLocation(prgObject, "view"), 1, GL_FALSE, glm::value_ptr(view));
         // glUniformMatrix4fv(glGetUniformLocation(prgObject, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         
         // Draw cube object
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, cube_object_pos);
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
         glUseProgram(prgObject);
-        glUniformMatrix4fv(glGetUniformLocation(prgObject, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(prgObject, "model"), 1, GL_FALSE, glm::value_ptr(model_object));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glm::vec3 light_pos = glm::vec3(model_lighting * glm::vec4(cube_lighting_pos, 1.0f));
+        glUniform3f(glGetUniformLocation(prgObject, "light_pos"), light_pos.x, light_pos.y, light_pos.z);
         glUniform3f(glGetUniformLocation(prgObject, "viewer_pos"), cam.getPosition().x, cam.getPosition().y, cam.getPosition().z);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
+        
+        
         // Draw cube lighting
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, cube_lighting_pos);
-        model = glm::scale(model, glm::vec3(0.10f));
         glUseProgram(prgLight);
-        glUniformMatrix4fv(glGetUniformLocation(prgObject, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(prgObject, "model"), 1, GL_FALSE, glm::value_ptr(model_lighting));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glDrawArrays(GL_TRIANGLES, 0, 36);

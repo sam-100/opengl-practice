@@ -72,9 +72,10 @@ void frame_buffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+
 void cursor_position_callback(GLFWwindow *window, double xPos, double yPos) {
-    static double xPosOld = xPos, yPosOld = yPos;
     
+    static double xPosOld = xPos, yPosOld = yPos;
     double dx = xPos - xPosOld, dy = yPos - yPosOld;
     cam.turn_yaw(glm::radians(-dx) / 10);
     cam.turn_pitch(glm::radians(-dy) / 10);
@@ -82,6 +83,8 @@ void cursor_position_callback(GLFWwindow *window, double xPos, double yPos) {
     xPosOld = xPos;
     yPosOld = yPos;
 }
+
+
 
 void error(const char *msg) {
     cerr << "Error: " << msg << endl;
@@ -109,14 +112,14 @@ const char* load_file(const char* file_path) {
     return buffer;
 }
 
-GLuint generate_texture(const char *file_name) {
+GLuint generate_texture(const char *file_name, int gl_texture_wrap_s, int gl_texture_wrap_t, int gl_texture_min_filter, int gl_texture_mag_filter) {
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gl_texture_wrap_s);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_texture_wrap_t);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_texture_min_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_texture_mag_filter);
     int width, height, nrChannels;
     unsigned char *data = stbi_load(file_name, &width, &height, &nrChannels, 0);
     if(!data) {
