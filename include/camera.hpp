@@ -21,10 +21,12 @@ public:
     void turn_yaw(float angle);
     void turn_pitch(float angle);
     void turn_roll(float angle);
+
+
     void print() const;
     float getFov() const;
     glm::mat4 getViewMatrix() const;
-
+    glm::vec3 getPosition() const;
 };
 
 #endif

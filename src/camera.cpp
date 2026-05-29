@@ -59,3 +59,7 @@ void camera::print() const {
 float camera::getFov() const {
     return m_fov;
 }
+
+glm::vec3 camera::getPosition() const {
+    return m_position;
+}

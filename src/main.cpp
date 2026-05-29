@@ -192,6 +192,7 @@ int main(int argc, char **argv) {
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform3f(glGetUniformLocation(prgObject, "viewer_pos"), cam.getPosition().x, cam.getPosition().y, cam.getPosition().z);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
