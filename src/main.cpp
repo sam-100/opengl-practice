@@ -169,8 +169,8 @@ int main(int argc, char **argv) {
     
     /* ====================================================== */
     
-    
     // main loop
+    glm::mat3 normal_matrix;
     while(!glfwWindowShouldClose(window)) {
         glClearColor(0.0f, 0.0f, 0.0f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -196,6 +196,8 @@ int main(int argc, char **argv) {
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "model"), 1, GL_FALSE, glm::value_ptr(model_object));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        normal_matrix = glm::transpose(glm::inverse(model_object));
+        glUniformMatrix3fv(glGetUniformLocation(prgObject, "normal_matrix"), 1, GL_FALSE, glm::value_ptr(normal_matrix));
         glm::vec3 light_pos = glm::vec3(model_lighting * glm::vec4(cube_lighting_pos, 1.0f));
         glUniform3f(glGetUniformLocation(prgObject, "light_pos"), light_pos.x, light_pos.y, light_pos.z);
         glUniform3f(glGetUniformLocation(prgObject, "viewer_pos"), cam.getPosition().x, cam.getPosition().y, cam.getPosition().z);
@@ -207,6 +209,8 @@ int main(int argc, char **argv) {
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "model"), 1, GL_FALSE, glm::value_ptr(model_lighting));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(prgObject, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        normal_matrix = glm::transpose(glm::inverse(model_object));
+        glUniformMatrix3fv(glGetUniformLocation(prgObject, "normal_matrix"), 1, GL_FALSE, glm::value_ptr(normal_matrix));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 

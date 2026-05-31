@@ -15,6 +15,16 @@ const float ambient_strength = 0.2f;
 const float specular_strength = 1.0f;
 const float shinines_value = 32.0f;
 
+
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
+uniform Material material;
+
 void main() {
 
     vec3 ambient = light_color * ambient_strength;
