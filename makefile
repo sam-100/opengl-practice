@@ -5,7 +5,9 @@ LDFLAGS = -L ThirdParty/lib -lglfw
 OBJ = bin/main.o \
 	bin/utils.o \
 	bin/glad.o \
-	bin/camera.o
+	bin/camera.o \
+	bin/object.o \
+	bin/cube.o
 
 all: main
 

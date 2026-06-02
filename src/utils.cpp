@@ -156,7 +156,11 @@ GLuint createShader(const char *file_name, int type) {
     if(!success) {
         glGetShaderInfoLog(shader, 512, &length, infolog);
         cerr << infolog << endl;
-        error("OpenGL: Failed to compile vertex shader");
+        if(type == GL_VERTEX_SHADER) {
+            error("OpenGL: Failed to compile vertex shader");
+        } else {
+            error("OpenGL: Failed to compile fragment shader");
+        }
     }
     return shader;
 }
