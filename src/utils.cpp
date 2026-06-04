@@ -183,3 +183,11 @@ GLuint linkShaders(GLuint vs, GLuint fs) {
     return prg;
 }
 
+glm::vec3 radialToCartesianCoordinates(double radius, float theta, float phi) {
+    glm::vec3 position;
+    float xy_component = radius * cos(phi);
+    position.x = xy_component * cos(theta);
+    position.y = xy_component * sin(theta);
+    position.z = radius * sin(phi);
+    return position;
+}

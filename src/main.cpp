@@ -7,6 +7,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "camera.hpp"
 #include "cube.hpp"
+#include "sphere.hpp"
 
 using namespace std;
 
@@ -52,6 +53,7 @@ int main(int argc, char **argv) {
     /* ====================================================== */
     
     cube cube(1.0f, 50.0f, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.7f, 0.2f, 0.0f));
+    sphere sphere(1.0f, 100.0f, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(0.0f));
 
     // main loop
     double prev_frame_time = glfwGetTime();
@@ -67,6 +69,9 @@ int main(int argc, char **argv) {
         
         cube.update((float)delta_time);
         cube.render(cam.getViewMatrix(), projection, cam.getPosition());
+
+        sphere.update((float)delta_time);
+        sphere.render(cam.getViewMatrix(), projection, cam.getPosition());
 
         
         glfwSwapBuffers(window);

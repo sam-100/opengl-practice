@@ -18,5 +18,6 @@ GLuint generate_texture(const char *file_name);
 GLuint createShader(const char *file_name, int type);
 GLuint linkShaders(GLuint vs, GLuint fs);
 ostream& operator<<(ostream &out, const glm::vec3 &vec);
+glm::vec3 radialToCartesianCoordinates(double radius, float theta, float phi);
 
 #endif

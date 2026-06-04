@@ -7,7 +7,8 @@ OBJ = bin/main.o \
 	bin/glad.o \
 	bin/camera.o \
 	bin/object.o \
-	bin/cube.o
+	bin/cube.o \
+	bin/sphere.o
 
 all: main
 
